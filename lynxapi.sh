@@ -155,3 +155,6 @@ install_LynxAPI() {
 
     colorized_echo green "LynxAPI's files downloaded and configured successfully"
 }
+
+# Call the install_LynxAPI function to start the installation process.
+install_LynxAPI
