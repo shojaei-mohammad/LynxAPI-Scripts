@@ -4,5 +4,6 @@ Scripts for LynxAPI
 ## Installer
 Install LynxAPI using this script
 ```bash
-sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
+sudo bash -c "$(curl -sL https://github.com/shojaei-mohammad/LynxAPI-Scripts/raw/main/lynxapi.sh)"
+
 ```
