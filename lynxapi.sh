@@ -52,7 +52,7 @@ mkdir -p $DATABASE_DIR
 
 # Step 4: Run session.py to initialize the database
 colored_echo "Initializing the database..."
-python app/db/session.py
+python3 app/db/session.py
 
 # Step 5: Generate a secure API secret (using openssl for generating a secure random string)
 colored_echo "Generating a secure API secret..."
@@ -72,7 +72,7 @@ UVICORN_PORT=$(grep UVICORN_PORT $ENV_FILE | cut -d '=' -f2)
 
 # Step 7: Create an API user
 colored_echo "Creating an API user..."
-python $CREATE_USER_SCRIPT
+python3 $CREATE_USER_SCRIPT
 
 # Step 8: Run the FastAPI app using Uvicorn with settings from the .env file
 colored_echo "Starting the FastAPI app using Uvicorn..."
