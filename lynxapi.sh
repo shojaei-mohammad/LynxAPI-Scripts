@@ -78,7 +78,7 @@ API_SECRET_VALUE=$(openssl rand -hex 32)
 
 # Step 6: Replace the API secret in the .env file, update paths, and read Uvicorn settings
 colored_echo "Configuring environment variables..."
-cp $ENV_SAMPLE_FILE $ENV_FILE
+mv $ENV_SAMPLE_FILE $ENV_FILE
 
 sed -i "s|API_SECRET_KEY=your_secret_key_here|API_SECRET_KEY=$API_SECRET_VALUE|" $ENV_FILE
 sed -i "s|SCRIPTS_PATH=/path/to/app/scripts/network-config.sh|SCRIPTS_PATH=$NETWORK_CONFIG_SCRIPT|" $ENV_FILE
