@@ -24,10 +24,18 @@ colored_echo() {
 
 # Check if Python is installed, if not, install the latest version
 if ! command -v python3 &> /dev/null; then
-    colored_echo "Python is not installed. Installing the latest Python version..."
-    sudo apt-get install -y python3 python3-pip
+    colored_echo "Python is not installed. Installing the latest Python version and venv..."
+    sudo apt-get install -y python3 python3-pip python3-venv
 else
     colored_echo "Python is already installed."
+fi
+
+# Check if venv is installed, if not, install it
+if ! command -v python3 -m venv &> /dev/null; then
+    colored_echo "venv is not installed. Installing venv..."
+    sudo apt-get install -y python3-venv
+else
+    colored_echo "venv is already installed."
 fi
 
 # Check if pip is installed, if not, install it
