@@ -3,11 +3,11 @@
 # Define variables
 REPO_URL="https://github.com/shojaei-mohammad/LynxAPI.git" # Replace with your repository URL
 MAIN_DIR="LynxAPI"
-SOURC_DIR=$MAIN_DIR/code
-ENV_FILE="$MAIN_DIR/.env"
-ENV_SAMPLE_FILE="$MAIN_DIR/.env.sample"
-NETWORK_CONFIG_SCRIPT="$MAIN_DIR/app/scripts/network-config.sh"
-DATABASE_DIR="$MAIN_DIR/data"
+SOURC_DIR="$MAIN_DIR/code"
+ENV_FILE="$SOURC_DIR/.env"
+ENV_SAMPLE_FILE="$SOURC_DIR/.env.sample"
+NETWORK_CONFIG_SCRIPT="$SOURC_DIR/app/scripts/network-config.sh"
+DATABASE_DIR="$SOURC_DIR/data"
 DATABASE_FILE="rbac_db.db"
 DATABASE_URL="sqlite:///$DATABASE_DIR/$DATABASE_FILE"
 CREATE_USER_SCRIPT="$MAIN_DIR/app/utils/create_user.py"
@@ -49,7 +49,7 @@ fi
 # Step 1: Clone the FastAPI app repository
 colored_echo "Cloning the repository..."
 git clone $REPO_URL $SOURC_DIR
-cd $MAIN_DIR
+cd $SOURC_DIR
 
 # Step 2: Create a virtual environment in the main directory
 colored_echo "Creating a virtual environment..."
