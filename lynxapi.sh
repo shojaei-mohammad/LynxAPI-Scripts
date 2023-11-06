@@ -34,7 +34,7 @@ fi
 # Check if venv is installed, if not, install it
 if ! command -v python3 -m venv &> /dev/null; then
     colored_echo "venv is not installed. Installing venv..."
-    sudo apt-get install -y python3-venv
+    sudo apt-get install -y virtualenv
 else
     colored_echo "venv is already installed."
 fi
@@ -53,7 +53,7 @@ git clone $REPO_URL $SOURC_DIR
 
 # Step 2: Create a virtual environment in the main directory
 colored_echo "Creating a virtual environment..."
-python3 -m venv $MAIN_DIR/venv
+virtualenv -p python3 $MAIN_DIR/venv
 
 # Activate the virtual environment
 source $MAIN_DIR/venv/bin/activate
