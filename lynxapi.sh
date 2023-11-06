@@ -10,7 +10,7 @@ NETWORK_CONFIG_SCRIPT="$SOURC_DIR/app/scripts/network-config.sh"
 DATABASE_DIR="$SOURC_DIR/data"
 DATABASE_FILE="rbac_db.db"
 DATABASE_URL="sqlite:///$DATABASE_DIR/$DATABASE_FILE"
-CREATE_USER_SCRIPT="$MAIN_DIR/app/utils/create_user.py"
+CREATE_USER_SCRIPT="$SOURC_DIR/app/utils/create_user.py"
 
 # Colors
 RED='\033[0;31m'
@@ -49,7 +49,6 @@ fi
 # Step 1: Clone the FastAPI app repository
 colored_echo "Cloning the repository..."
 git clone $REPO_URL $SOURC_DIR
-cd $SOURC_DIR
 
 # Step 2: Create a virtual environment in the main directory
 colored_echo "Creating a virtual environment..."
@@ -58,9 +57,11 @@ python3 -m venv $MAIN_DIR/venv
 # Activate the virtual environment
 source $MAIN_DIR/venv/bin/activate
 
+cd $SOURC_DIR
+
 # Step 3: Install the requirements in the virtual environment
 colored_echo "Installing requirements in the virtual environment..."
-pip install -r $SOURC_DIR/requirements.txt
+pip install -r ./requirements.txt
 
 # Step 3: Initialize the database directory
 colored_echo "Creating the database directory..."
