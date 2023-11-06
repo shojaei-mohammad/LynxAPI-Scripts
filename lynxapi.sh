@@ -11,7 +11,7 @@ NETWORK_CONFIG_SCRIPT="$SOURC_DIR/app/scripts/network-config.sh"
 DATABASE_DIR="$SOURC_DIR/data"
 DATABASE_FILE="rbac_db.db"
 DATABASE_URL="sqlite:///$DATABASE_DIR/$DATABASE_FILE"
-CREATE_USER_SCRIPT="$SOURC_DIR/app/utils/create_user.py"
+CREATE_USER_SCRIPT="$SOURC_DIR/app/db/create_user.py"
 
 # Colors
 RED='\033[0;31m'
@@ -53,7 +53,6 @@ git clone $REPO_URL $SOURC_DIR
 
 # Step 2: Create a virtual environment in the main directory
 colored_echo "Creating a virtual environment..."
-colored_echo "$MAIN_DIR"
 virtualenv -p python3 $MAIN_DIR/venv
 
 # Activate the virtual environment
