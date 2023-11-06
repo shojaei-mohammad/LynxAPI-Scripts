@@ -2,7 +2,8 @@
 
 # Define variables
 REPO_URL="https://github.com/shojaei-mohammad/LynxAPI.git" # Replace with your repository URL
-MAIN_DIR="LynxAPI" # Directory name for the cloned repository
+MAIN_DIR="LynxAPI"
+SOURC_DIR=$MAIN_DIR/code
 ENV_FILE="$MAIN_DIR/.env"
 ENV_SAMPLE_FILE="$MAIN_DIR/.env.sample"
 NETWORK_CONFIG_SCRIPT="$MAIN_DIR/app/scripts/network-config.sh"
@@ -39,12 +40,19 @@ fi
 
 # Step 1: Clone the FastAPI app repository
 colored_echo "Cloning the repository..."
-git clone $REPO_URL $MAIN_DIR
+git clone $REPO_URL $SOURC_DIR
 cd $MAIN_DIR
 
-# Step 2: Install the requirements (Assuming you have Python & pip installed)
-colored_echo "Installing requirements..."
-pip install -r requirements.txt
+# Step 2: Create a virtual environment in the main directory
+colored_echo "Creating a virtual environment..."
+python3 -m venv $MAIN_DIR/venv
+
+# Activate the virtual environment
+source $MAIN_DIR/venv/bin/activate
+
+# Step 3: Install the requirements in the virtual environment
+colored_echo "Installing requirements in the virtual environment..."
+pip install -r $SOURC_DIR/requirements.txt
 
 # Step 3: Initialize the database directory
 colored_echo "Creating the database directory..."
