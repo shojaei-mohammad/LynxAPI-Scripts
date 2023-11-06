@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-REPO_URL="https://github.com/your-username/your-repo.git" # Replace with your repository URL
+REPO_URL="https://github.com/shojaei-mohammad/LynxAPI.git" # Replace with your repository URL
 MAIN_DIR="LynxAPI" # Directory name for the cloned repository
 ENV_FILE="$MAIN_DIR/.env"
 ENV_SAMPLE_FILE="$MAIN_DIR/.env.sample"
