@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # Define variables
-REPO_URL="https://github.com/shojaei-mohammad/LynxAPI.git" # Replace with your repository URL
-MAIN_DIR="LynxAPI"
+REPO_URL="https://github.com/shojaei-mohammad/LynxAPI.git"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" # Gets the directory where the script is located
+MAIN_DIR="$SCRIPT_DIR/LynxAPI"
 SOURC_DIR="$MAIN_DIR/code"
-ENV_FILE="./.env"
-ENV_SAMPLE_FILE="./.env.sample"
+ENV_FILE="$MAIN_DIR/.env"
+ENV_SAMPLE_FILE="$MAIN_DIR/.env.sample"
 NETWORK_CONFIG_SCRIPT="$SOURC_DIR/app/scripts/network-config.sh"
 DATABASE_DIR="$SOURC_DIR/data"
 DATABASE_FILE="rbac_db.db"
