@@ -1,160 +1,68 @@
 #!/bin/bash
 
-INSTALL_DIR="/opt"
-if [ -z "$APP_NAME" ]; then
-    APP_NAME="LynxAPI"
-fi
-APP_DIR="$INSTALL_DIR/$APP_NAME"
-DATA_DIR="/var/lib/$APP_NAME"
-COMPOSE_FILE="$APP_DIR/docker-compose.yml"
+# Define variables
+REPO_URL="https://github.com/your-username/your-repo.git" # Replace with your repository URL
+MAIN_DIR="LynxAPI" # Directory name for the cloned repository
+ENV_FILE="$MAIN_DIR/.env"
+ENV_SAMPLE_FILE="$MAIN_DIR/.env.sample"
+NETWORK_CONFIG_SCRIPT="$MAIN_DIR/app/scripts/network-config.sh"
+DATABASE_DIR="$MAIN_DIR/data"
+DATABASE_FILE="rbac_db.db"
+DATABASE_URL="sqlite:///$DATABASE_DIR/$DATABASE_FILE"
+CREATE_USER_SCRIPT="$MAIN_DIR/app/utils/create_user.py"
 
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 
-colorized_echo() {
-    local color=$1
-    local text=$2
-
-    case $color in
-        "red")
-        printf "\e[91m${text}\e[0m\n";;
-        "green")
-        printf "\e[92m${text}\e[0m\n";;
-        "yellow")
-        printf "\e[93m${text}\e[0m\n";;
-        "blue")
-        printf "\e[94m${text}\e[0m\n";;
-        "magenta")
-        printf "\e[95m${text}\e[0m\n";;
-        "cyan")
-        printf "\e[96m${text}\e[0m\n";;
-        *)
-            echo "${text}"
-        ;;
-    esac
+# Helper function for colored echo
+colored_echo() {
+    echo -e "${GREEN}$1${NC}"
 }
 
-check_running_as_root() {
-    if [ "$(id -u)" != "0" ]; then
-        colorized_echo red "This command must be run as root."
-        exit 1
-    fi
-}
+# Step 1: Clone the FastAPI app repository
+colored_echo "Cloning the repository..."
+git clone $REPO_URL $MAIN_DIR
+cd $MAIN_DIR
 
-detect_os() {
-    # Detect the operating system
-    if [ -f /etc/lsb-release ]; then
-        OS=$(lsb_release -si)
-        elif [ -f /etc/os-release ]; then
-        OS=$(awk -F= '/^NAME/{print $2}' /etc/os-release | tr -d '"')
-        elif [ -f /etc/redhat-release ]; then
-        OS=$(cat /etc/redhat-release | awk '{print $1}')
-        elif [ -f /etc/arch-release ]; then
-        OS="Arch"
-    else
-        colorized_echo red "Unsupported operating system"
-        exit 1
-    fi
-}
+# Step 2: Install the requirements (Assuming you have Python & pip installed)
+colored_echo "Installing requirements..."
+pip install -r requirements.txt
 
-detect_and_update_package_manager() {
-    colorized_echo blue "Updating package manager"
-    if [[ "$OS" == "Ubuntu"* ]] || [[ "$OS" == "Debian"* ]]; then
-        PKG_MANAGER="apt-get"
-        $PKG_MANAGER update
-        elif [[ "$OS" == "CentOS"* ]]; then
-        PKG_MANAGER="yum"
-        $PKG_MANAGER update -y
-        $PKG_MANAGER epel-release -y
-        elif [ "$OS" == "Fedora"* ]; then
-        PKG_MANAGER="dnf"
-        $PKG_MANAGER update
-        elif [ "$OS" == "Arch" ]; then
-        PKG_MANAGER="pacman"
-        $PKG_MANAGER -Sy
-    else
-        colorized_echo red "Unsupported operating system"
-        exit 1
-    fi
-}
+# Step 3: Initialize the database directory
+colored_echo "Creating the database directory..."
+mkdir -p $DATABASE_DIR
 
-detect_compose() {
-    # Check if docker compose command exists
-    if docker compose >/dev/null 2>&1; then
-        COMPOSE='docker compose'
-        elif docker-compose >/dev/null 2>&1; then
-        COMPOSE='docker-compose'
-    else
-        colorized_echo red "docker compose not found"
-        exit 1
-    fi
-}
+# Step 4: Run session.py to initialize the database
+colored_echo "Initializing the database..."
+python app/db/session.py
 
-install_package () {
-    if [ -z $PKG_MANAGER ]; then
-        detect_and_update_package_manager
-    fi
+# Step 5: Generate a secure API secret (using openssl for generating a secure random string)
+colored_echo "Generating a secure API secret..."
+API_SECRET_VALUE=$(openssl rand -hex 32)
 
-    PACKAGE=$1
-    colorized_echo blue "Installing $PACKAGE"
-    if [[ "$OS" == "Ubuntu"* ]] || [[ "$OS" == "Debian"* ]]; then
-        $PKG_MANAGER -y install "$PACKAGE"
-        elif [[ "$OS" == "CentOS"* ]]; then
-        $PKG_MANAGER install -y "$PACKAGE"
-        elif [ "$OS" == "Fedora"* ]; then
-        $PKG_MANAGER install -y "$PACKAGE"
-        elif [ "$OS" == "Arch" ]; then
-        $PKG_MANAGER -S --noconfirm "$PACKAGE"
-    else
-        colorized_echo red "Unsupported operating system"
-        exit 1
-    fi
-}
+# Step 6: Replace the API secret in the .env file, update paths, and read Uvicorn settings
+colored_echo "Configuring environment variables..."
+cp $ENV_SAMPLE_FILE $ENV_FILE
 
-install_docker() {
-    # Install Docker and Docker Compose using the official installation script
-    colorized_echo blue "Installing Docker"
-    curl -fsSL https://get.docker.com | sh
-    colorized_echo green "Docker installed successfully"
-}
+sed -i "s|API_SECRET_KEY=your_secret_key_here|API_SECRET_KEY=$API_SECRET_VALUE|" $ENV_FILE
+sed -i "s|SCRIPTS_PATH=/path/to/app/scripts/network-config.sh|SCRIPTS_PATH=$NETWORK_CONFIG_SCRIPT|" $ENV_FILE
+sed -i "s|SQLALCHEMY_DATABASE_URL=\"sqlite:///path/to/db.sqlite3\"|SQLALCHEMY_DATABASE_URL=\"$DATABASE_URL\"|" $ENV_FILE
 
-generate_api_secret_key() {
-    # Generate a random API secret key using OpenSSL
-    local api_key=$(openssl rand -hex 32)
-    echo "$api_key"
-}
+# Read Uvicorn settings from .env
+UVICORN_HOST=$(grep UVICORN_HOST $ENV_FILE | cut -d '=' -f2)
+UVICORN_PORT=$(grep UVICORN_PORT $ENV_FILE | cut -d '=' -f2)
 
-replace_api_secret_key() {
-    local api_key=$(generate_api_secret_key)
-    # Replace the placeholder in the .env file with the generated API secret key
-    sed -i "s/your_secret_key_here/$api_key/" "$APP_DIR/.env"
-    colorized_echo green "API secret key set in $APP_DIR/.env"
-}
+# Step 7: Create an API user
+colored_echo "Creating an API user..."
+python $CREATE_USER_SCRIPT
 
-install_LynxAPI() {
-    # Fetch releases
-    FILES_URL_PREFIX="https://raw.githubusercontent.com/shojaei-mohammad/LynxAPI/main"
+# Step 8: Run the FastAPI app using Uvicorn with settings from the .env file
+colored_echo "Starting the FastAPI app using Uvicorn..."
+nohup uvicorn app.main:app --host "$UVICORN_HOST" --port "$UVICORN_PORT" &
 
-    mkdir -p "$DATA_DIR"
-    mkdir -p "$APP_DIR"
+# Provide user feedback
+colored_echo "FastAPI app installation is complete and running on http://$UVICORN_HOST:$UVICORN_PORT"
 
-    local api_key=$(generate_api_secret_key)
-
-    colorized_echo blue "Fetching compose file"
-    curl -sL "$FILES_URL_PREFIX/docker-compose.yml" -o "$COMPOSE_FILE"
-    colorized_echo green "Compose file saved in $COMPOSE_FILE"
-
-    colorized_echo blue "Fetching .env file"
-    curl -sL "$FILES_URL_PREFIX/.env.sample" -o "$APP_DIR/.env"
-    colorized_echo green ".env file fetched"
-
-    # Update database connection string if needed
-    sed -i 's/^# \(SQLALCHEMY_DATABASE_URL = .*\)$/\1/' "$APP_DIR/.env"
-    sed -i "s~\(SQLALCHEMY_DATABASE_URL = \).*~\1\"sqlite:///$DATA_DIR/db.sqlite3\"~" "$APP_DIR/.env"
-    colorized_echo green "Database connection string set in $APP_DIR/.env"
-    sed -i "s/your_secret_key_here/$api_key/" "$APP_DIR/.env"
-    colorized_echo green "API secret key set in $APP_DIR/.env"
-
-    colorized_echo green "LynxAPI's files downloaded and configured successfully"
-}
-
-# Call the install_LynxAPI function to start the installation process.
-install_LynxAPI
+# End of script
