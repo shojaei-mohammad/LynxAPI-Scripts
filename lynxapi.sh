@@ -21,6 +21,22 @@ colored_echo() {
     echo -e "${GREEN}$1${NC}"
 }
 
+# Check if Python is installed, if not, install the latest version
+if ! command -v python3 &> /dev/null; then
+    colored_echo "Python is not installed. Installing the latest Python version..."
+    sudo apt-get install -y python3 python3-pip
+else
+    colored_echo "Python is already installed."
+fi
+
+# Check if pip is installed, if not, install it
+if ! command -v pip3 &> /dev/null; then
+    colored_echo "pip is not installed. Installing pip..."
+    sudo apt-get install -y python3-pip
+else
+    colored_echo "pip is already installed."
+fi
+
 # Step 1: Clone the FastAPI app repository
 colored_echo "Cloning the repository..."
 git clone $REPO_URL $MAIN_DIR
