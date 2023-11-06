@@ -4,8 +4,8 @@
 REPO_URL="https://github.com/shojaei-mohammad/LynxAPI.git" # Replace with your repository URL
 MAIN_DIR="LynxAPI"
 SOURC_DIR="$MAIN_DIR/code"
-ENV_FILE="$SOURC_DIR/.env"
-ENV_SAMPLE_FILE="$SOURC_DIR/.env.sample"
+ENV_FILE="./.env"
+ENV_SAMPLE_FILE="./.env.sample"
 NETWORK_CONFIG_SCRIPT="$SOURC_DIR/app/scripts/network-config.sh"
 DATABASE_DIR="$SOURC_DIR/data"
 DATABASE_FILE="rbac_db.db"
