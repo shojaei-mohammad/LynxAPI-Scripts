@@ -31,13 +31,6 @@ else
     colored_echo "Python is already installed."
 fi
 
-# Check if venv is installed, if not, install it
-if ! command -v virtualenv &> /dev/null; then
-    colored_echo "venv is not installed. Installing venv..."
-    sudo apt-get install -y virtualenv
-else
-    colored_echo "venv is already installed."
-fi
 
 # Check if pip is installed, if not, install it
 if ! command -v pip3 &> /dev/null; then
@@ -45,6 +38,14 @@ if ! command -v pip3 &> /dev/null; then
     sudo apt-get install -y python3-pip
 else
     colored_echo "pip is already installed."
+fi
+
+# Check if venv is installed, if not, install it
+if ! command -v virtualenv &> /dev/null; then
+    colored_echo "venv is not installed. Installing venv..."
+    sudo pip3 install virtualenv
+else
+    colored_echo "venv is already installed."
 fi
 
 # Step 1: Clone the FastAPI app repository
