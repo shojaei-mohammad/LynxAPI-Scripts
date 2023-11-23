@@ -32,7 +32,7 @@ else
 fi
 
 # Check if venv is installed, if not, install it
-if ! command -v python3 -m venv &> /dev/null; then
+if ! command -v virtualenv -p python3 venv &> /dev/null; then
     colored_echo "venv is not installed. Installing venv..."
     sudo apt-get install -y virtualenv
 else
