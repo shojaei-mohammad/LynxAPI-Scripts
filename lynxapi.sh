@@ -80,7 +80,7 @@ cp "$ENV_SAMPLE_FILE" "$ENV_FILE"
 
 sed -i "s|API_SECRET_KEY=your_secret_key_here|API_SECRET_KEY=$API_SECRET_VALUE|" "$ENV_FILE"
 sed -i "s|SCRIPTS_PATH=/path/to/app/scripts/network-config.sh|SCRIPTS_PATH=$NETWORK_CONFIG_SCRIPT|" "$ENV_FILE"
-sed -i "s|SQLALCHEMY_DATABASE_URL=\"sqlite:////path/to/db.sqlite3\"|SQLALCHEMY_DATABASE_URL=\"$DATABASE_URL\"|" "$ENV_FILE"
+sed -i "s|SQLALCHEMY_DATABASE_URL=\"sqlite:////path/to/code/db.sqlite3\"|SQLALCHEMY_DATABASE_URL=\"$DATABASE_URL\"|" "$ENV_FILE"
 
 # Read Uvicorn settings from .env
 UVICORN_HOST=$(grep UVICORN_HOST "$ENV_FILE" | cut -d '=' -f2)
