@@ -23,13 +23,22 @@ colored_echo() {
     echo -e "${GREEN}$1${NC}"
 }
 
+# Function to install Python 3.10 or later
+install_python() {
+    colored_echo "Installing Python 3.10 or later..."
+    sudo apt-get update
+    sudo apt-get install -y software-properties-common
+    sudo add-apt-repository ppa:deadsnakes/ppa -y
+    sudo apt-get update
+    sudo apt-get install -y python3.10
+}
+
 # Check the installed Python version
 installed_python_version=$(python3 -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
 
 # Check if Python 3.10 or later is installed
 if [ "$(printf '%s\n' "3.10" "$installed_python_version" | sort -V | head -n1)" != "3.10" ]; then
-    colored_echo "Python 3.10 or later is required but not installed. Installing the latest Python version and venv..."
-    sudo apt-get install -y python3 python3-pip python3-venv
+    install_python
 else
     colored_echo "Python $installed_python_version is installed."
 fi
