@@ -23,14 +23,16 @@ colored_echo() {
     echo -e "${GREEN}$1${NC}"
 }
 
-# Check if Python is installed, if not, install the latest version
-if ! command -v python3 &> /dev/null; then
-    colored_echo "Python is not installed. Installing the latest Python version and venv..."
+# Check the installed Python version
+installed_python_version=$(python3 -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
+
+# Check if Python 3.10 or later is installed
+if [ "$(printf '%s\n' "3.10" "$installed_python_version" | sort -V | head -n1)" != "3.10" ]; then
+    colored_echo "Python 3.10 or later is required but not installed. Installing the latest Python version and venv..."
     sudo apt-get install -y python3 python3-pip python3-venv
 else
-    colored_echo "Python is already installed."
+    colored_echo "Python $installed_python_version is installed."
 fi
-
 
 # Check if pip is installed, if not, install it
 if ! command -v pip3 &> /dev/null; then
