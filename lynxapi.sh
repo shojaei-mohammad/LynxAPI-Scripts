@@ -65,7 +65,7 @@ git clone $REPO_URL "$SOURC_DIR"
 
 # Step 2: Create a virtual environment in the main directory
 colored_echo "Creating a virtual environment..."
-virtualenv -p python3 "$MAIN_DIR"/venv
+virtualenv -p python3.10 "$MAIN_DIR"/venv
 
 # Activate the virtual environment
 source "$MAIN_DIR"/venv/bin/activate
